@@ -1,0 +1,218 @@
+---
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Submission — Dev Agarwal</title>
+    <meta name="robots" content="noindex" />
+    <style>
+      :root {
+        --paper: #f4efe4;
+        --surface: #fffdf8;
+        --ink: #1f1d1a;
+        --ink-2: #5f5951;
+        --ink-3: #7c7568;
+        --hair: #ddd3c2;
+        --red: #b23a2b;
+        --mono: "Geist Mono Variable", ui-monospace, Menlo, monospace;
+        --sans: "Geist Variable", -apple-system, system-ui, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font: 400 15px/1.65 var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+      .doc { max-width: 760px; margin: 0 auto; padding: 64px 24px 120px; }
+      header { border-bottom: 1px solid var(--hair); padding-bottom: 28px; margin-bottom: 8px; }
+      h1 { margin: 0 0 8px; font-size: 34px; font-weight: 300; letter-spacing: -0.02em; }
+      h1 b { font-weight: 600; }
+      .sub { margin: 0; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+      .meta { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 6px 18px; font: 400 12px/1.5 var(--mono); color: var(--ink-2); }
+      .meta a { color: var(--red); text-decoration: none; }
+      .meta a:hover { text-decoration: underline; }
+
+      section { padding: 34px 0 6px; border-bottom: 1px solid var(--hair); }
+      section:last-child { border-bottom: 0; }
+      .num { font: 500 10px/1 var(--mono); letter-spacing: 0.14em; color: #a3957f; text-transform: uppercase; }
+      h2 { margin: 6px 0 14px; font-size: 20px; font-weight: 500; letter-spacing: -0.01em; }
+      h3 { margin: 22px 0 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.02em; }
+      p { margin: 0 0 12px; color: #2c2925; }
+      ul { margin: 0 0 12px; padding-left: 18px; }
+      li { margin-bottom: 6px; color: #2c2925; }
+      a { color: var(--red); text-underline-offset: 2px; }
+      code { font: 400 12.5px/1.5 var(--mono); background: #ece5d6; padding: 1px 5px; border-radius: 4px; }
+      .linkbox {
+        display: block; padding: 12px 14px; margin: 0 0 8px;
+        background: var(--surface); border: 1px solid var(--hair); border-radius: 10px;
+        font: 400 13px/1.4 var(--mono); color: var(--ink); text-decoration: none;
+        word-break: break-all;
+      }
+      .linkbox span { display: block; font: 500 9.5px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+      .linkbox:hover { border-color: #c3b69f; }
+      .todo {
+        margin: 10px 0 14px; padding: 12px 14px;
+        border: 1px dashed #c9b79a; border-radius: 10px;
+        background: #faf4e6; color: #6b5c46; font-size: 13px;
+      }
+      .todo b { color: #8a5a12; }
+      .fine { font-size: 11.5px; color: var(--ink-3); }
+      @media print { body { background: #fff; } .doc { padding: 0; } a { color: inherit; } }
+    </style>
+  </head>
+  <body>
+    <div class="doc">
+      <header>
+        <h1>Dev <b>Agarwal</b></h1>
+        <p class="sub">Founding Team Engineer, Generalist · General Machines</p>
+        <div class="meta">
+          <span>+91 90168 61582</span>
+          <a href="mailto:devagarwal085@gmail.com">devagarwal085@gmail.com</a>
+          <a href="https://www.linkedin.com/in/dev-agarwal-a03052240/">LinkedIn</a>
+          <a href="https://github.com/DevAgarwal2">GitHub</a>
+        </div>
+      </header>
+
+      <section>
+        <div class="num">01</div>
+        <h2>Live link</h2>
+        <a class="linkbox" href="https://bangkok-massing.vercel.app/"><span>Tool</span>https://bangkok-massing.vercel.app/</a>
+        <p>Draw a plot, pick the zone, the road it faces and a building type. The controls resolve into a buildable envelope on the real
+        block, two concept massings that fit it, and a pass/fail reading against every control.</p>
+      </section>
+
+      <section>
+        <div class="num">02</div>
+        <h2>Repo</h2>
+        <a class="linkbox" href="https://github.com/DevAgarwal2/bangkok-massing"><span>Code</span>https://github.com/DevAgarwal2/bangkok-massing</a>
+      </section>
+
+      <section>
+        <div class="num">03</div>
+        <h2>One-pager</h2>
+
+        <h3>What I understood</h3>
+        <p>A Bangkok developer wants to know what a plot can hold <em>before</em> paying an architect: how big, how tall, what it might
+        look like. The binding numbers are FAR (floor area over land), OSR (open space over floor area, not over land), setbacks and,
+        in a few zones only, height.</p>
+        <p>From the B.E. 2556 regulation: พ.3 is FAR 7.0, OSR 4.5 %, no height cap; ย.4 is 3.0 / 10 %; only ย.1 and ย.2 carry a hard
+        12 m height. The finding that shaped the tool: <strong>in commercial zones the plan caps floor area, not height.</strong> Height
+        falls out of plot ÷ floor plate. So the tool shows a FAR readout instead of a height slider.</p>
+
+        <h3>What I did, and why</h3>
+        <ul>
+          <li>One zone, พ.3, done properly, with the full table exposed so the choice is visible rather than hidden.</li>
+          <li>Any plot shape: setbacks are applied per edge on the real polygon, not to a bounding box.</li>
+          <li>Two schemes from one envelope — tower-on-podium and stepped terraces — so the comparison is about plate strategy, not
+          about rule interpretation.</li>
+          <li>Whole floors only, never over entitlement: a scheme can land a few percent under target, shown as a note, rather than
+          breaching FAR to hit a round number.</li>
+          <li>The real site from OpenStreetMap: 201 buildings, 100 roads with kerbs and lane paint, a few hundred trees.</li>
+        </ul>
+
+        <h3>Technical decisions, and why</h3>
+        <ul>
+          <li><strong>Astro, fully static.</strong> The chrome is HTML; the only client JS is the scene. Nothing to keep alive, nothing to time out.</li>
+          <li><strong>Three.js, no tile server.</strong> OSM footprints are baked to one JSON at build time, so the app never depends on
+          Overpass at runtime.</li>
+          <li><strong>Hand-written geometry</strong> — shoelace area, per-edge miter offset with a health check, convex hull, rotating-calipers
+          minimum-area rectangle for the tower plate. No turf or clipper payload, and every step is inspectable.</li>
+          <li><strong>One model, three outputs.</strong> The same rules object drives the mesh, the compliance table and the isometric
+          figure, so the picture cannot drift from the numbers.</li>
+          <li><strong>Height-independent setbacks</strong>, because a setback that reacts to the height that reacts to the setback never
+          settles — it oscillated by 12 % when it did.</li>
+          <li><strong>Smoothness:</strong> merged context geometry, instanced trees and fins, shadows only from the proposal, pixel ratio
+          capped at 2.</li>
+        </ul>
+
+        <h3>What's still wrong, and what I'd do next</h3>
+        <ul>
+          <li>The zone is user-selected. Next: wire the BMA zoning layer so the plot reads its own zone and sub-area.</li>
+          <li>Setbacks outside the plan's own zones are modelled approximations. Next: per-district Building Control rules.</li>
+          <li>Context heights are estimated where OSM is untagged. Next: LOD1 plus a height prior.</li>
+          <li>Not modelled: prohibited uses, parking minimums, fire access, the FAR bonus, the draft 4th revision.</li>
+          <li>No facade textures — it is a massing study, not a render.</li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="num">04</div>
+        <h2>Transcripts</h2>
+        <p>Raw sessions, in order: connecting to the MCP server and starting the assignment, the zoning research, and the build planning.</p>
+        <div class="todo"><b>Before submitting:</b> replace this box with the three links. Export the first session from OpenCode, paste it
+        into a public gist or doc, and link each one.</div>
+
+        <h3>What the AI missed, and how I caught it</h3>
+        <ul>
+          <li>Its first setback model ate 57 % of the plot — an 11 m front setback plus 6 m sides on a 1,000 m² site — and produced a
+          45-storey needle. The tell was the floor count against the plate area, not the height itself.</li>
+          <li>It tied setback depth to the modelled height, which fed back into the height: GFA dropped when I switched from condominium
+          to office. Caught by changing program and watching a number that should not move.</li>
+          <li>The terraced scheme exceeded FAR by 12 % while the checklist still said pass, because the floor-rounding loop allowed one
+          overshoot. Made the loop never exceed and let the plate land under target instead.</li>
+          <li>The entitlement slider was wired to nothing. It moved, and changed nothing.</li>
+          <li>On mobile the panels were still children of the 3D stage, so they were clipped and the page went blank below the tabs.</li>
+          <li>Two earlier visual directions — a dark console, then a cool grey dashboard — did not match the warm paper language of
+          Silicon Bricks' own Aayra viewer. I had to point at the real product to get it.</li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="num">05</div>
+        <h2>Setup</h2>
+        <div class="todo"><b>Before submitting:</b> these are drafted from my r&eacute;sum&eacute;. I need to tighten each to my own numbers,
+        especially spend and the 3D/vision answer.</div>
+        <h3>1. Tools, models and agents day to day</h3>
+        <p>OpenCode, Codex and Hermes as the daily agent harnesses; Claude and DeepSeek-class models for long builds; Mistral, Qwen and
+        Gemma hosted locally for inference work; Harbor for provider evaluations; vLLM and SGLang for serving.</p>
+        <h3>2. How I run them</h3>
+        <p>Parallel sessions per workstream, a rules file per repo, MCP servers for anything with a real API (GitHub, browsers, this
+        assignment's own server), and small scripts where a tool does not exist.</p>
+        <h3>3. Spend</h3>
+        <div class="todo"><b>Fill in:</b> monthly tokens or dollar figure.</div>
+        <h3>4. Most ambitious thing built mostly with AI</h3>
+        <p>AgentHire — <a href="https://aihirings.pages.dev">aihirings.pages.dev</a> — an agent-native hiring portal where candidates
+        apply through their own agent over MCP. It broke on auth: the agent needed to manage profiles, upload r&eacute;sum&eacute;s and
+        submit without a human in the loop, and the first OAuth flow assumed a browser.</p>
+        <h3>5. Getting up to speed on an unfamiliar codebase or domain</h3>
+        <p>Read the entry point and the data model first, run it before reading further, then let the agent map call sites while I keep
+        the mental model. For a domain, I go to the primary document — here the ministerial regulation itself rather than summaries.</p>
+        <h3>6. 3D, vision, diffusion, local or open-source models</h3>
+        <p>Local and open-source: hosted Qwen and Gemma on an RTX 5090 and an H100 behind OpenAI-compatible APIs, full BF16 on the H100
+        and GGUF on the consumer card, with continuous batching and KV-cache reuse. Vision and diffusion: limited — this project is my
+        first real 3D build, done in Three.js.</p>
+      </section>
+
+      <section>
+        <div class="num">06</div>
+        <h2>Best project</h2>
+        <p><a href="https://aihirings.pages.dev">AgentHire</a> — designed and shipped end to end: the MCP auth that lets an agent act
+        for a candidate, the portal, and the Cloudflare deployment. Everything except the visual design system was mine.</p>
+      </section>
+
+      <section>
+        <div class="num">07</div>
+        <h2>About me</h2>
+        <p>MCA at Nirma University, BCA at GLS University before that. Freelance AI solutions consultant, currently Mistral AI
+        Ambassador. I build agent infrastructure and the evaluations around it: inference benchmarks across providers, GPU hosting,
+        and agent-native products.</p>
+        <p>
+          <a href="https://bangkok-massing.vercel.app/resume.pdf">R&eacute;sum&eacute;</a> ·
+          <a href="https://www.linkedin.com/in/dev-agarwal-a03052240/">LinkedIn</a> ·
+          <a href="https://github.com/DevAgarwal2">GitHub</a> ·
+          <a href="https://aihirings.pages.dev">aihirings.pages.dev</a>
+        </p>
+        <p class="fine">Also: won the Sarvam AI Bulbul Challenge (AI podcast generator, 11 Indian languages) · hermesguide.xyz did 14,000
+        visitors in three days · open-source contributor to Hermes Agent (#765, #808), 35+ models through OpenCode Zen/Go.</p>
+      </section>
+    </div>
+  </body>
+</html>
