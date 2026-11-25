@@ -1,0 +1,626 @@
+---
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+import '../styles/app.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Massing feasibility — Sukhumvit 22–24</title>
+    <meta name="description" content="Bangkok zoning controls resolved into a live 3D massing study." />
+  </head>
+  <body>
+    <div class="app" id="app">
+      <main class="scene" id="scene">
+        <canvas id="view"></canvas>
+        <div class="loading" id="loading"><span class="spinner"></span>Building the site</div>
+
+        <header class="scene-title">
+          <h1>Sukhumvit <b>22–24</b></h1>
+          <p><span id="crumbSite">SITE</span> <i>/</i> <span id="crumbZone">พ.3</span> <i>/</i> <span id="crumbScheme">TOWER ON PODIUM</span></p>
+        </header>
+
+        <div class="scene-clock">
+          <span class="dot"></span>
+          <span id="clockText">—</span>
+          <em>left</em>
+        </div>
+
+        <div class="pin" id="pin" aria-hidden="true">
+          <b id="pinName">Tower</b>
+          <span id="pinMeta">25 FL · 80 M</span>
+        </div>
+
+        <div class="hud-line">
+          <span id="sbPos">x — · z —</span>
+          <span class="sep">·</span>
+          <span>metres</span>
+          <span class="sep">·</span>
+          <span id="sbChecks">—</span>
+        </div>
+
+        <div class="dock">
+          <div class="dock-metrics">
+            <div class="dock-cell"><span>Plot</span><b data-kpi="plot">—</b></div>
+            <div class="dock-cell"><span>Buildable</span><b data-kpi="env">—</b></div>
+            <div class="dock-cell"><span>GFA</span><b data-kpi="gfa">—</b></div>
+            <div class="dock-cell"><span>FAR</span><b data-kpi="far">—</b><i data-kpi="farCap">/ 7.0</i></div>
+            <div class="dock-cell"><span>Height</span><b data-kpi="height">—</b></div>
+          </div>
+          <div class="dock-tools">
+            <button class="iconbtn on" id="xrayBtn" title="Ghost context" aria-label="Ghost context" aria-pressed="true">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="8" height="8" rx="1.3" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="5.5" y="5.5" width="8" height="8" rx="1.3" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".5"/></svg>
+            </button>
+            <button class="iconbtn" id="resetBtn" title="Reset plot" aria-label="Reset plot">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.4 8a4.6 4.6 0 1 0 1.5-3.4M3 3v3h3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="iconbtn" id="shotBtn" title="Export image" aria-label="Export image">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10.5V2.6M5.2 5.4 8 2.6l2.8 2.8M2.8 10.8v2.6h10.4v-2.6" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <p class="disclaimer">Illustrative massing from the B.E. 2556 controls. Context from OpenStreetMap.</p>
+
+        <div class="tip" id="tip"></div>
+      </main>
+
+        <aside class="card card-left" id="rail">
+          <section class="group">
+            <header class="group-h">
+              <h2>Site</h2>
+              <button class="link" id="drawBtn">Redraw</button>
+            </header>
+            <dl class="kv">
+              <div><dt>Plot area</dt><dd><span data-count="plotArea">—</span> m²</dd></div>
+              <div><dt>Buildable</dt><dd><span data-count="envelope">—</span> m² <small id="kvPct">—</small></dd></div>
+            </dl>
+            <label class="fld">
+              <span>Frontage road</span>
+              <select id="roadSelect"></select>
+            </label>
+            <p class="note" id="drawHint">Draw any outline. The setback envelope follows its real edges.</p>
+          </section>
+
+          <section class="group">
+            <header class="group-h"><h2>Zoning</h2></header>
+            <label class="fld">
+              <span>Zone</span>
+              <select id="zoneSelect"></select>
+            </label>
+            <p class="note" id="zoneNote">—</p>
+          </section>
+
+          <section class="group">
+            <header class="group-h"><h2>Program</h2></header>
+            <div class="seg" id="programSeg" role="group" aria-label="Building type"></div>
+            <p class="note" id="programNote">—</p>
+          </section>
+
+          <section class="group">
+            <header class="group-h">
+              <h2>Massing</h2>
+              <span class="group-meta">2 options</span>
+            </header>
+            <div class="opts" id="schemeRows"></div>
+            <label class="fld range">
+              <span>Entitlement <b id="pctLabel">96%</b></span>
+              <input type="range" id="pct" min="60" max="100" step="1" value="96" />
+            </label>
+          </section>
+        </aside>
+
+        <aside class="card card-right" id="inspector">
+          <nav class="ptabs" id="ptabs" role="tablist" aria-label="Assessment panels">
+            <button data-pane="assess" role="tab" aria-selected="true" class="on">Assessment</button>
+            <button data-pane="massing" role="tab" aria-selected="false">Massing</button>
+            <button data-pane="data" role="tab" aria-selected="false">Data</button>
+          </nav>
+
+          <section class="pane" data-pane="assess">
+            <div class="verdict" id="verdict">
+              <span class="v-icon"></span>
+              <div><b id="verdictTitle">—</b><span id="verdictSub">—</span></div>
+            </div>
+            <table class="grid">
+              <thead>
+                <tr><th>Control</th><th class="r">Limit</th><th class="r">Proposed</th><th class="c">Status</th></tr>
+              </thead>
+              <tbody id="ruleTable"></tbody>
+            </table>
+            <p class="limits" id="limits">—</p>
+            <p class="note">Setbacks outside the plan's height-capped zones are approximations of the Building Control Act.</p>
+          </section>
+
+          <section class="pane" data-pane="massing" hidden>
+            <figure class="figure">
+              <figcaption><span>Envelope &amp; massing</span><span id="figName">—</span></figcaption>
+              <div id="figure"></div>
+            </figure>
+            <table class="grid compare">
+              <thead><tr><th></th><th class="r">Tower</th><th class="r">Terraces</th></tr></thead>
+              <tbody id="massTable"></tbody>
+            </table>
+          </section>
+
+          <section class="pane" data-pane="data" hidden>
+            <dl class="kv wide" id="reads"></dl>
+            <p class="fine">
+              Zoning: Ministerial Regulation B.E. 2556. Site geometry: OpenStreetMap contributors (ODbL).
+              Context heights estimated where untagged. Zone is user-selected.
+            </p>
+          </section>
+        </aside>
+
+
+      <nav class="mtabs" id="mtabs" aria-label="Sections">
+        <button data-mtab="inputs" class="on">Inputs</button>
+        <button data-mtab="assess">Assessment</button>
+        <button data-mtab="massing">Massing</button>
+        <button data-mtab="data">Data</button>
+      </nav>
+    </div>
+
+    <script>
+      import { Site3D } from '../lib/scene';
+      import { area, distToSegment, isHealthy, nearestRoad, roadWidth, safeInset, type Poly } from '../lib/geom';
+      import { ZONES, computeRules, fmt, setbacksFor, zoneOf } from '../lib/zoning';
+      import { PROGRAMS, buildSchemes, type Program, type Scheme } from '../lib/massing';
+      import { isoFigure } from '../lib/iso';
+
+      const ICONS = {
+        pass: '<svg viewBox="0 0 12 12"><path d="M2 6.4l2.6 2.4L10 3.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        warn: '<svg viewBox="0 0 12 12"><path d="M6 2.2v4.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="6" cy="9.5" r=".95" fill="currentColor"/></svg>',
+        fail: '<svg viewBox="0 0 12 12"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+      };
+
+      const $ = <T extends HTMLElement = HTMLElement>(s: string) => document.querySelector(s) as T;
+
+      type SiteData = {
+        center: { lat: number; lon: number };
+        plot: Poly;
+        buildings: { id: string; kind: string; name?: string; h: number; p: Poly }[];
+        roads: { id: string; kind: string; name?: string; p: Poly }[];
+        meta: { place: string };
+      };
+
+      const state = {
+        site: null as SiteData | null,
+        plot: [] as Poly,
+        draft: [] as Poly,
+        drawing: false,
+        zone: 'พ.3',
+        program: 'condo' as Program,
+        roadId: null as string | null,
+        active: 0,
+        pct: 0.96,
+        schemes: [] as Scheme[],
+      };
+
+      let scene: Site3D | null = null;
+      let lastRules: ReturnType<typeof computeRules> | null = null;
+
+      const boot = async () => {
+        const res = await fetch('/site.json');
+        const site: SiteData = await res.json();
+        state.site = site;
+        state.plot = site.plot.map((p) => [...p]) as Poly;
+
+        fillZones();
+        fillPrograms();
+
+        scene = new Site3D($<HTMLCanvasElement>('#view'), {
+          onPick: (p) => { if (state.drawing) addPoint(p); },
+          onRoad: (id) => {
+            if (id && state.roadId !== id) {
+              state.roadId = id;
+              ($('#roadSelect') as HTMLSelectElement).value = id;
+              recompute();
+            }
+          },
+          onHover: (p, roadName) => {
+            $('#sbPos').textContent = p ? `x ${p[0].toFixed(1)} · z ${p[1].toFixed(1)}` : 'x — · z —';
+            const tip = $('#tip');
+            if (roadName) {
+              tip.textContent = `${roadName} · click to set the frontage`;
+              tip.classList.add('show');
+            } else tip.classList.remove('show');
+          },
+        });
+        scene.setPlot(state.plot);
+        scene.setSite(state.plot);
+        scene.loadSite(site.buildings, site.roads);
+
+        fillRoads();
+        recompute(true, true);
+        requestAnimationFrame(() => $('#loading')?.classList.add('gone'));
+      };
+
+      const fillZones = () => {
+        const sel = $('#zoneSelect') as HTMLSelectElement;
+        sel.innerHTML = ZONES.map(
+          (z) => `<option value="${z.code}" ${z.code === state.zone ? 'selected' : ''}>${z.code} · ${z.label}</option>`,
+        ).join('');
+        const z0 = zoneOf(state.zone);
+        $('#zoneNote').textContent = `FAR ${z0.far.toFixed(1)} · OSR ${z0.osr}%${z0.heightMax ? ` · ${z0.heightMax} m cap` : ' · no height cap'}`;
+        $('#crumbZone').textContent = state.zone;
+        sel.addEventListener('change', () => {
+          state.zone = sel.value;
+          $('#crumbZone').textContent = state.zone;
+          const z = zoneOf(state.zone);
+          $('#zoneNote').textContent = `FAR ${z.far.toFixed(1)} · OSR ${z.osr}%${z.heightMax ? ` · ${z.heightMax} m cap` : ' · no height cap'}`;
+          recompute();
+        });
+      };
+
+      const fillPrograms = () => {
+        const wrap = $('#programSeg');
+        wrap.innerHTML = (Object.keys(PROGRAMS) as Program[])
+          .map((k) => `<button data-prog="${k}" class="${k === state.program ? 'on' : ''}">${PROGRAMS[k].label}</button>`)
+          .join('');
+        wrap.addEventListener('click', (e) => {
+          const b = (e.target as HTMLElement).closest('button');
+          if (!b) return;
+          state.program = b.dataset.prog as Program;
+          wrap.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
+          $('#programNote').textContent = `${PROGRAMS[state.program].floorH} m floor-to-floor · ${PROGRAMS[state.program].note}`;
+          recompute();
+        });
+        $('#programNote').textContent = `${PROGRAMS[state.program].floorH} m floor-to-floor · ${PROGRAMS[state.program].note}`;
+      };
+
+      const fillRoads = () => {
+        const sel = $('#roadSelect') as HTMLSelectElement;
+        const roads = state.site!.roads.filter((r) => ['primary', 'secondary', 'tertiary', 'residential', 'service'].includes(r.kind));
+        const [cx, cz] = centroidOf(state.plot);
+        const near = roads
+          .map((r) => ({ r, d: Math.min(...r.p.map(([x, z]) => Math.hypot(x - cx, z - cz))) }))
+          .sort((a, b) => a.d - b.d)
+          .slice(0, 14);
+        sel.innerHTML = near
+          .map(({ r, d }) => `<option value="${r.id}">${r.name ?? labelRoad(r.kind)} · ${Math.round(d)} m</option>`)
+          .join('');
+        const pick = near[0]?.r ?? null;
+        state.roadId = pick?.id ?? null;
+        if (pick) sel.value = pick.id;
+        sel.addEventListener('change', () => {
+          state.roadId = sel.value;
+          recompute();
+        });
+      };
+
+      $('#drawBtn').addEventListener('click', () => {
+        state.drawing = !state.drawing;
+        state.draft = [];
+        if (state.drawing) {
+          state.plot = [];
+          scene?.setPlot([]);
+          scene?.setSite([]);
+          ($('#drawBtn') as HTMLElement).textContent = 'Finish';
+          $('#drawHint').textContent = 'Click the ground to place corners. Enter closes; Esc cancels.';
+        } else commitDraft();
+      });
+
+      $('#resetBtn').addEventListener('click', () => {
+        state.drawing = false;
+        state.draft = [];
+        state.plot = state.site!.plot.map((p) => [...p]) as Poly;
+        ($('#drawBtn') as HTMLElement).textContent = 'Redraw';
+        $('#drawHint').textContent = 'Draw any outline. The setback envelope follows its real edges.';
+        scene?.setPlot(state.plot);
+        scene?.setSite(state.plot);
+        reconToRoad();
+        recompute(false, true);
+      });
+
+      const addPoint = (p: [number, number]) => {
+        const prev = state.draft[state.draft.length - 1];
+        if (prev && Math.hypot(p[0] - prev[0], p[1] - prev[1]) < 2) return;
+        state.draft.push([round(p[0]), round(p[1])]);
+        state.plot = [...state.draft];
+        scene?.setPlot(state.plot);
+        if (state.draft.length >= 3) ($('#drawBtn') as HTMLElement).textContent = 'Finish';
+      };
+
+      window.addEventListener('keydown', (e) => {
+        if (!state.drawing) return;
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); commitDraft(); }
+        if (e.key === 'Escape') {
+          state.drawing = false;
+          state.draft = [];
+          state.plot = state.site!.plot.map((q) => [...q]) as Poly;
+          ($('#drawBtn') as HTMLElement).textContent = 'Redraw';
+          scene?.setPlot(state.plot);
+          scene?.setSite(state.plot);
+          recompute();
+        }
+        if (e.key === 'Backspace' && state.draft.length) {
+          state.draft.pop();
+          state.plot = [...state.draft];
+          scene?.setPlot(state.plot);
+        }
+      });
+
+      const commitDraft = () => {
+        if (state.draft.length < 3 || !isHealthy(state.draft)) {
+          $('#drawHint').textContent = 'That outline crosses itself. Place corners in one continuous loop.';
+          return;
+        }
+        state.drawing = false;
+        state.plot = [...state.draft];
+        state.draft = [];
+        ($('#drawBtn') as HTMLElement).textContent = 'Redraw';
+        $('#drawHint').textContent = 'Draw any outline. The setback envelope follows its real edges.';
+        scene?.setPlot(state.plot);
+        scene?.setSite(state.plot);
+        reconToRoad();
+        recompute(false, true);
+      };
+
+      const reconToRoad = () => {
+        const near = nearestRoad(state.site!.roads, centroidOf(state.plot));
+        if (!state.roadId || (near && near.dist > 90)) {
+          state.roadId = near?.road.id ?? null;
+          if (state.roadId) ($('#roadSelect') as HTMLSelectElement).value = state.roadId;
+        }
+      };
+
+      const pctEl = $('#pct') as HTMLInputElement;
+      const syncPct = () => pctEl.style.setProperty('--fill', `${pctEl.value}%`);
+      pctEl.addEventListener('input', () => {
+        state.pct = Number(pctEl.value) / 100;
+        ($('#pctLabel') as HTMLElement).textContent = `${pctEl.value}%`;
+        syncPct();
+        recompute();
+      });
+      syncPct();
+
+      $('#shotBtn').addEventListener('click', () => {
+        const url = scene?.capture();
+        if (!url) return;
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `massing-${state.zone}-${Math.round(area(state.plot))}m2.png`;
+        a.click();
+      });
+
+      $('#xrayBtn').addEventListener('click', (e) => {
+        const b = e.currentTarget as HTMLElement;
+        const on = !b.classList.contains('on');
+        b.classList.toggle('on', on);
+        b.setAttribute('aria-pressed', String(on));
+        scene?.setXray(on);
+      });
+
+      $('#view').addEventListener('pointermove', (e) => {
+        const ev = e as PointerEvent;
+        const host = $('#scene').getBoundingClientRect();
+        const tip = $('#tip');
+        tip.style.transform = `translate(${ev.clientX - host.left + 14}px, ${ev.clientY - host.top + 16}px)`;
+      });
+
+      const recompute = (first = false, refocus = false) => {
+        if (!state.site) return;
+        if (state.plot.length < 3) return;
+
+        const plot = state.plot;
+        const plotArea = area(plot);
+        const road = state.site.roads.find((r) => r.id === state.roadId) ?? null;
+        const rw = roadWidth(road?.kind);
+        const zone = zoneOf(state.zone);
+
+        let env = envelopeOf(plot, zone, rw, road, null);
+        let rules = computeRules(plotArea, zone, rw, env ? area(env) : 0, zone.heightMax !== null, null);
+        const draftSchemes = buildSchemes(env ?? plot, rules, state.program, state.pct);
+        const h = draftSchemes[state.active]?.height ?? draftSchemes[0]?.height ?? 30;
+
+        env = envelopeOf(plot, zone, rw, road, h);
+        rules = computeRules(plotArea, zone, rw, env ? area(env) : 0, zone.heightMax !== null, h);
+        lastRules = rules;
+        state.schemes = buildSchemes(env ?? plot, rules, state.program, state.pct);
+        if (state.active >= state.schemes.length) state.active = 0;
+
+        const envArea = env ? area(env) : 0;
+        renderNumbers(plotArea, envArea, plot.length);
+        renderDock(plotArea, envArea, rules, state.schemes[state.active]);
+        renderRules(rules, state.schemes[state.active]);
+        renderSchemes(state.schemes, rules);
+        renderMassTable(state.schemes);
+        renderReads(rules, state.schemes[state.active]);
+        renderFigure(plot, env, rules, state.schemes[state.active]);
+
+        scene?.setEnvelope(env, Math.max(2, (state.schemes[state.active]?.height ?? 30) * 1.02));
+        scene?.setScheme(state.schemes[state.active]!, !first);
+        if (first || refocus) scene?.focus(plot, state.schemes[state.active]?.height ?? 40, first);
+      };
+
+      const envelopeOf = (plot: Poly, zone: ReturnType<typeof zoneOf>, rw: number, road: any, h: number | null): Poly | null => {
+        const sb = setbacksFor(h ?? 30, rw, zone.heightMax !== null);
+        let frontIdx = -1;
+        if (road) {
+          let best = Infinity;
+          for (let i = 0; i < plot.length; i++) {
+            const a = plot[i];
+            const b = plot[(i + 1) % plot.length];
+            for (let k = 0; k < road.p.length - 1; k++) {
+              const d = segDist(a, b, road.p[k], road.p[k + 1]);
+              if (d < best) { best = d; frontIdx = i; }
+            }
+          }
+        }
+        return safeInset(plot, (i) => (i === frontIdx ? sb.front : sb.side), Math.min(sb.front, sb.side));
+      };
+
+      const renderNumbers = (plotArea: number, envArea: number, edges: number) => {
+        countTo('[data-count="plotArea"]', plotArea);
+        countTo('[data-count="envelope"]', envArea);
+        $('#kvPct').textContent = `${Math.round((envArea / plotArea) * 100)}% of plot`;
+      };
+
+      const renderDock = (plotArea: number, envArea: number, r: ReturnType<typeof computeRules>, s: Scheme) => {
+        const set = (k: string, v: string) => {
+          const el = document.querySelector(`[data-kpi="${k}"]`) as HTMLElement | null;
+          if (el) el.textContent = v;
+        };
+        set('plot', `${fmt(plotArea)} m²`);
+        set('env', `${fmt(envArea)} m²`);
+        set('gfa', `${fmt(s.gfa)} m²`);
+        set('far', s.far.toFixed(2));
+        set('farCap', `/ ${r.zone.far.toFixed(1)}`);
+        set('height', `${s.height.toFixed(0)} m`);
+        $('#pinName').textContent = s.name;
+        $('#pinMeta').textContent = `${s.floors} FL · ${s.height.toFixed(0)} M · ${fmt(s.gfa)} M²`;
+        $('#crumbScheme').textContent = s.name.toUpperCase();
+      };
+
+      const renderRules = (r: ReturnType<typeof computeRules>, s: Scheme) => {
+        const openProvided = Math.max(0, r.plotArea - s.footprint);
+        const rows = [
+          { c: 'Total floor area', lim: `≤ ${fmt(r.maxGfa)} m²`, got: `${fmt(s.gfa)} m²`, ok: s.gfa <= r.maxGfa + 1 },
+          { c: 'Open space', lim: `≥ ${fmt(r.minOpen)} m²`, got: `${fmt(openProvided)} m²`, ok: openProvided >= r.minOpen - 1 },
+          { c: 'Building footprint', lim: `≤ ${fmt(r.maxFootprintByOsr)} m²`, got: `${fmt(s.footprint)} m²`, ok: s.footprint <= r.maxFootprintByOsr + 1 },
+          { c: 'Setbacks, front / side', lim: `≥ ${r.setbacks.front} / ${r.setbacks.side} m`, got: `${r.setbacks.front} / ${r.setbacks.side} m`, ok: true },
+          { c: 'Height', lim: r.zone.heightMax ? `≤ ${r.zone.heightMax} m` : 'no zone cap', got: `${s.height.toFixed(0)} m`, ok: !r.zone.heightMax || s.height <= r.zone.heightMax },
+        ];
+
+        $('#ruleTable').innerHTML = rows
+          .map(
+            (row) => `<tr>
+              <td>${row.c}</td>
+              <td class="r">${row.lim}</td>
+              <td class="r">${row.got}</td>
+              <td class="c"><span class="st ${row.ok ? 'pass' : 'fail'}" title="${row.ok ? 'Satisfied' : 'Over limit'}">${row.ok ? ICONS.pass : ICONS.fail}</span></td>
+            </tr>`,
+          )
+          .join('');
+
+        $('#limits').textContent = `In force · FAR ${r.zone.far.toFixed(1)} : 1 · OSR ${r.zone.osr}% · front ${r.setbacks.front} m · sides ${r.setbacks.side} m · ${r.zone.heightMax ? `height cap ${r.zone.heightMax} m` : 'no height cap'}`;
+
+        const pass = rows.filter((x) => x.ok).length;
+        const v = $('#verdict');
+        v.className = `verdict ${pass === rows.length ? 'ok' : 'warn'}`;
+        $('#verdictTitle').textContent = `${pass} of ${rows.length} controls satisfied`;
+        $('#verdictSub').textContent = `${s.name} · FAR ${s.far.toFixed(2)} of ${r.zone.far.toFixed(1)} · ${s.floors} floors`;
+        $('#sbChecks').textContent = `${pass}/${rows.length} checks`;
+        v.querySelector('.v-icon')!.innerHTML = pass === rows.length ? ICONS.pass : ICONS.warn;
+      };
+
+      const renderSchemes = (schemes: Scheme[], r: ReturnType<typeof computeRules>) => {
+        $('#schemeRows').innerHTML = schemes
+          .map(
+            (s, i) => `<button class="opt ${i === state.active ? 'on' : ''}" data-i="${i}" role="radio" aria-checked="${i === state.active}">
+              <span class="opt-radio" aria-hidden="true"></span>
+              <span class="opt-body">
+                <span class="opt-name">${s.name}</span>
+                <span class="opt-meta">${s.floors} fl · ${fmt(s.gfa)} m² · ${s.height.toFixed(0)} m</span>
+              </span>
+              <span class="opt-far">${s.far.toFixed(2)}</span>
+            </button>`,
+          )
+          .join('');
+        $('#schemeRows').querySelectorAll<HTMLButtonElement>('.opt').forEach((b) =>
+          b.addEventListener('click', () => {
+            state.active = Number(b.dataset.i);
+            recompute();
+          }),
+        );
+      };
+
+      const renderMassTable = (schemes: Scheme[]) => {
+        const rows: [string, (s: Scheme) => string][] = [
+          ['Floors', (s) => String(s.floors)],
+          ['Floor area', (s) => `${fmt(s.gfa)} m²`],
+          ['FAR', (s) => s.far.toFixed(2)],
+          ['Height', (s) => `${s.height.toFixed(0)} m`],
+          ['Largest plate', (s) => `${fmt(s.footprint)} m²`],
+          ['Site coverage', (s) => `${Math.round((s.footprint / (lastRules?.plotArea ?? 1)) * 100)}%`],
+        ];
+        $('#massTable').innerHTML = rows
+          .map(([k, f]) => `<tr><td>${k}</td>${schemes.map((s) => `<td class="r${s === schemes[state.active] ? ' on' : ''}">${f(s)}</td>`).join('')}</tr>`)
+          .join('');
+      };
+
+      const renderReads = (r: ReturnType<typeof computeRules>, s: Scheme) => {
+        const rows: [string, string][] = [
+          ['Max GFA', `${fmt(r.maxGfa)} m²`],
+          ['Min open space', `${fmt(r.minOpen)} m²`],
+          ['Footprint cap', `${fmt(r.maxFootprintByOsr)} m²`],
+          ['Buildable line', `${fmt(r.envelopeArea)} m²`],
+          ['Proposed GFA', `${fmt(s.gfa)} m²`],
+          ['Proposed plate', `${fmt(s.footprint)} m²`],
+          ['Setbacks', `${r.setbacks.front} / ${r.setbacks.side} m`],
+          ['Envelope share', `${Math.round((r.envelopeArea / r.plotArea) * 100)}% of plot`],
+        ];
+        $('#reads').innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+      };
+
+      const renderFigure = (plot: Poly, env: Poly | null, r: ReturnType<typeof computeRules>, s: Scheme) => {
+        $('#figure').innerHTML = isoFigure(plot, env, r, s);
+        $('#figName').textContent = s.name;
+      };
+
+      const countTo = (sel: string, to: number) => {
+        const el = document.querySelector(sel) as HTMLElement | null;
+        if (!el) return;
+        const from = Number(el.dataset.v ?? 0);
+        el.dataset.v = String(to);
+        const t0 = performance.now();
+        const tick = (t: number) => {
+          const k = Math.min(1, (t - t0) / 380);
+          el.textContent = fmt(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+          if (k < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      };
+
+      const round = (n: number) => Math.round(n * 10) / 10;
+      const labelRoad = (k?: string) => (k ? k[0].toUpperCase() + k.slice(1) : 'Road');
+      const centroidOf = (p: Poly): [number, number] => [
+        p.reduce((s, q) => s + q[0], 0) / p.length,
+        p.reduce((s, q) => s + q[1], 0) / p.length,
+      ];
+      const segDist = (a: [number, number], b: [number, number], c: [number, number], d: [number, number]) =>
+        Math.min(distToSegment(a, c, d), distToSegment(b, c, d), distToSegment(c, a, b), distToSegment(d, a, b));
+
+      const ptabs = [...document.querySelectorAll<HTMLButtonElement>('#ptabs button')];
+      const panes = [...document.querySelectorAll<HTMLElement>('.pane')];
+      const setPane = (p: string) => {
+        ptabs.forEach((b) => {
+          const on = b.dataset.pane === p;
+          b.classList.toggle('on', on);
+          b.setAttribute('aria-selected', String(on));
+        });
+        panes.forEach((el) => (el.hidden = el.dataset.pane !== p));
+      };
+      ptabs.forEach((b) => b.addEventListener('click', () => setPane(b.dataset.pane!)));
+
+      const mtabs = [...document.querySelectorAll<HTMLButtonElement>('#mtabs button')];
+      const setMobile = (t: string) => {
+        document.body.dataset.mtab = t;
+        mtabs.forEach((b) => b.classList.toggle('on', b.dataset.mtab === t));
+        if (t !== 'inputs') setPane(t);
+        document.querySelectorAll('.card').forEach((el) => ((el as HTMLElement).scrollTop = 0));
+      };
+      mtabs.forEach((b) => b.addEventListener('click', () => setMobile(b.dataset.mtab!)));
+      setMobile('inputs');
+
+      const deadline = new Date('2026-11-27T08:18:42Z').getTime();
+      setInterval(() => {
+        const ms = deadline - Date.now();
+        const el = $('#clockText');
+        if (!el) return;
+        if (ms <= 0) { el.textContent = 'closed'; return; }
+        const h = Math.floor(ms / 3600000);
+        const m = Math.floor((ms % 3600000) / 60000);
+        const sec = Math.floor((ms % 60000) / 1000);
+        el.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+      }, 1000);
+
+      boot();
+    </script>
+  </body>
+</html>
