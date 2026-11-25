@@ -160,10 +160,11 @@ import '@fontsource-variable/geist-mono';
         <p>Three raw sessions in order: connecting to the MCP server and starting the assignment; the zoning research; the build
         planning. Not summaries, not the coding sessions.</p>
         <div class="links">
-          <a href="#" aria-disabled="true">Session 01 — MCP server, start</a>
-          <a href="#" aria-disabled="true">Session 02 — zoning research</a>
-          <a href="#" aria-disabled="true">Session 03 — build planning</a>
+          <a href="/transcripts/01.html">Session 01 — connecting to the MCP server, starting the clock, the brief</a>
+          <a href="/transcripts/02.html">Session 02 — research, planning, the build, the redesigns</a>
         </div>
+        <p class="fine">Both exported with <code>opencode session export</code>. Unedited except credentials redacted and long tool
+        output truncated; every tool call can be opened in place.</p>
 
         <h3>What the AI missed, and how I caught it</h3>
         <ul>
@@ -187,8 +188,6 @@ import '@fontsource-variable/geist-mono';
       <section>
         <div class="num">05</div>
         <h2>Setup</h2>
-        <div class="todo"><b>Before submitting:</b> these are drafted from my r&eacute;sum&eacute;. I need to tighten each to my own numbers,
-        especially spend and the 3D/vision answer.</div>
         <h3>1. Tools, models and agents day to day</h3>
         <p>OpenCode, Codex and Hermes as the daily agent harnesses; Claude and DeepSeek-class models for long builds; Mistral, Qwen and
         Gemma hosted locally for inference work; Harbor for provider evaluations; vLLM and SGLang for serving.</p>
@@ -196,7 +195,9 @@ import '@fontsource-variable/geist-mono';
         <p>Parallel sessions per workstream, a rules file per repo, MCP servers for anything with a real API (GitHub, browsers, this
         assignment's own server), and small scripts where a tool does not exist.</p>
         <h3>3. Spend</h3>
-        <div class="todo"><b>Fill in:</b> monthly tokens or dollar figure.</div>
+        <p>This assignment ran about <strong>$0.57</strong> of inference, measured in the session export.</p>
+        <div class="todo"><b>Needs your number:</b> monthly spend across subscriptions, API top-ups and GPU rental. I will not guess
+        it.</div>
         <h3>4. Most ambitious thing built mostly with AI</h3>
         <p>AgentHire — <a href="https://aihirings.pages.dev">aihirings.pages.dev</a> — an agent-native hiring portal where candidates
         apply through their own agent over MCP. It broke on auth: the agent needed to manage profiles, upload r&eacute;sum&eacute;s and

@@ -9,3 +9,5 @@ dist/
 .vercel
 
 public/resume.pdf
+
+public/transcripts/
