@@ -64,6 +64,14 @@ import '@fontsource-variable/geist-mono';
         background: #faf4e6; color: #6b5c46; font-size: 13px;
       }
       .todo b { color: #8a5a12; }
+      .links { display: grid; gap: 6px; margin: 12px 0 16px; }
+      .links a {
+        display: block; padding: 10px 14px; border-radius: 10px;
+        background: var(--surface); border: 1px solid var(--hair);
+        font: 400 12.5px/1.4 var(--mono); text-decoration: none; color: var(--ink);
+      }
+      .links a[aria-disabled="true"] { color: #a99c86; border-style: dashed; }
+      .links a:not([aria-disabled="true"]):hover { border-color: #c3b69f; }
       .fine { font-size: 11.5px; color: var(--ink-3); }
       @media print { body { background: #fff; } .doc { padding: 0; } a { color: inherit; } }
     </style>
@@ -116,6 +124,9 @@ import '@fontsource-variable/geist-mono';
           <li>Whole floors only, never over entitlement: a scheme can land a few percent under target, shown as a note, rather than
           breaching FAR to hit a round number.</li>
           <li>The real site from OpenStreetMap: 201 buildings, 100 roads with kerbs and lane paint, a few hundred trees.</li>
+          <li>The interface is deliberately not a generic dashboard. I studied Silicon Bricks' own Aayra viewer and built in its
+          language: the render fills the screen, the panels float over it as warm paper glass, and the numbers sit in one pill at
+          the bottom. A feasibility tool is a sales tool as much as a calculator.</li>
         </ul>
 
         <h3>Technical decisions, and why</h3>
@@ -146,9 +157,13 @@ import '@fontsource-variable/geist-mono';
       <section>
         <div class="num">04</div>
         <h2>Transcripts</h2>
-        <p>Raw sessions, in order: connecting to the MCP server and starting the assignment, the zoning research, and the build planning.</p>
-        <div class="todo"><b>Before submitting:</b> replace this box with the three links. Export the first session from OpenCode, paste it
-        into a public gist or doc, and link each one.</div>
+        <p>Three raw sessions in order: connecting to the MCP server and starting the assignment; the zoning research; the build
+        planning. Not summaries, not the coding sessions.</p>
+        <div class="links">
+          <a href="#" aria-disabled="true">Session 01 — MCP server, start</a>
+          <a href="#" aria-disabled="true">Session 02 — zoning research</a>
+          <a href="#" aria-disabled="true">Session 03 — build planning</a>
+        </div>
 
         <h3>What the AI missed, and how I caught it</h3>
         <ul>
@@ -161,7 +176,11 @@ import '@fontsource-variable/geist-mono';
           <li>The entitlement slider was wired to nothing. It moved, and changed nothing.</li>
           <li>On mobile the panels were still children of the 3D stage, so they were clipped and the page went blank below the tabs.</li>
           <li>Two earlier visual directions — a dark console, then a cool grey dashboard — did not match the warm paper language of
-          Silicon Bricks' own Aayra viewer. I had to point at the real product to get it.</li>
+          Silicon Bricks' own Aayra viewer. The AI kept inventing a look instead of looking at the company; I had to paste the real
+          product in front of it. That is the failure I learned the most from: it will happily produce a generic answer about your
+          own product without ever opening it.</li>
+          <li>Once pointed at Aayra, it copied the surface but missed the structure: floating panels over a full-bleed render, one
+          dock, everything else hidden. The first attempt still had side rails eating a third of the screen.</li>
         </ul>
       </section>
 
